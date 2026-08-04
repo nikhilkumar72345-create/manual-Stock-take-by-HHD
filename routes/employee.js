@@ -61,10 +61,3 @@ router.get("/assigned/:employee_id", (req, res) => {
 });
 
 module.exports = router;
-POST
-/api/employee/login
-{
-  "employee_id": "EMP001"
-}
-GET
-/api/employee/assigned/EMP001
