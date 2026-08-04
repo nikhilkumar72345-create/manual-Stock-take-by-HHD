@@ -1,0 +1,109 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#f2f2f2;
+    padding:20px;
+}
+
+.login-box{
+    max-width:420px;
+    margin:60px auto;
+    background:#fff;
+    padding:25px;
+    border-radius:10px;
+    box-shadow:0 2px 10px rgba(0,0,0,0.2);
+}
+
+h2{
+    text-align:center;
+    margin-bottom:20px;
+    color:#1565c0;
+}
+
+h3{
+    margin:10px 0;
+}
+
+input{
+    width:100%;
+    padding:15px;
+    margin:10px 0;
+    font-size:18px;
+    border:1px solid #ccc;
+    border-radius:6px;
+}
+
+button{
+    width:100%;
+    padding:15px;
+    margin-top:10px;
+    font-size:18px;
+    border:none;
+    border-radius:6px;
+    background:#1565c0;
+    color:#fff;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#0d47a1;
+}
+
+#progress{
+    font-size:20px;
+    font-weight:bold;
+    color:green;
+    margin:15px 0;
+}
+
+#wsnList{
+    list-style:none;
+    margin-top:20px;
+}
+
+#wsnList li{
+    background:#fff;
+    padding:12px;
+    margin-bottom:8px;
+    border-radius:6px;
+    border-left:5px solid #1565c0;
+    font-size:16px;
+}
+
+.success{
+    color:green;
+    font-weight:bold;
+}
+
+.error{
+    color:red;
+    font-weight:bold;
+}
+
+@media screen and (max-width:480px){
+
+body{
+    padding:10px;
+}
+
+.login-box{
+    margin:20px auto;
+    width:100%;
+}
+
+button{
+    font-size:20px;
+    padding:18px;
+}
+
+input{
+    font-size:20px;
+    padding:18px;
+}
+
+}
