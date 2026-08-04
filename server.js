@@ -10,6 +10,7 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use("/api/employee", employeeRoutes);
 
 // Static Files
 app.use(express.static("public"));
@@ -31,3 +32,4 @@ app.get("/api/status", (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server started on port ${PORT}`);
 });
+const employeeRoutes = require("./routes/employee");
