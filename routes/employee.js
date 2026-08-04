@@ -66,3 +66,5 @@ POST
 {
   "employee_id": "EMP001"
 }
+GET
+/api/employee/assigned/EMP001
