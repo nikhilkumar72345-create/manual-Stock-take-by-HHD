@@ -1,129 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Manager Panel</title>
-
+<title>Manager Dashboard</title>
 <link rel="stylesheet" href="style.css">
-
 </head>
 
 <body>
 
-<div class="login-box">
+<header class="header">
+    <h1>📦 Manual Stock Take by HHD</h1>
+    <div>Manager Panel</div>
+</header>
 
-<h2>Manager Panel</h2>
+<div class="dashboard">
+
+<div class="card">
+<h3>Total WSN</h3>
+<h2 id="totalWSN">250000</h2>
+</div>
+
+<div class="card">
+<h3>Assigned</h3>
+<h2 id="assignedWSN">0</h2>
+</div>
+
+<div class="card">
+<h3>Pending</h3>
+<h2 id="pendingWSN">0</h2>
+</div>
+
+<div class="card">
+<h3>Completed</h3>
+<h2 id="completedWSN">0</h2>
+</div>
+
+</div>
+
+<div class="container">
+
+<h2>Assign Work</h2>
 
 <label>Select Employee</label>
 
 <select id="employeeList">
-
-<option value="">Loading...</option>
-
+<option>Select Employee</option>
 </select>
-
-<br><br>
-
-<label>Enter WSN</label>
 
 <input
 type="text"
 id="wsn"
 placeholder="Scan or Enter WSN">
 
+<div class="btn-group">
+
 <button onclick="assignWSN()">
-
 Assign WSN
+</button>
 
+<button>
+Send To HHD
+</button>
+
+<button>
+Upload Excel
 </button>
 
 <button onclick="loadEmployees()">
-
-Refresh Employee List
-
+Refresh
 </button>
-
-<p id="msg"></p>
 
 </div>
 
-<script>
+<h3>Assigned WSN</h3>
 
-loadEmployees();
+<table>
 
-async function loadEmployees(){
+<thead>
 
-const res=await fetch("/api/manager/employees");
+<tr>
 
-const data=await res.json();
+<th>WSN</th>
 
-let select=document.getElementById("employeeList");
+<th>Status</th>
 
-select.innerHTML="";
+<th>Employee</th>
 
-data.forEach(emp=>{
+</tr>
 
-select.innerHTML+=`
-<option value="${emp.employee_id}">
-${emp.employee_name} (${emp.employee_id})
-</option>
-`;
+</thead>
 
-});
+<tbody id="tableBody">
 
-}
+</tbody>
 
-async function assignWSN(){
+</table>
 
-let employee=document.getElementById("employeeList").value;
-
-let wsn=document.getElementById("wsn").value;
-
-if(employee=="" || wsn==""){
-
-alert("Select Employee and Enter WSN");
-
-return;
-
-}
-
-const res=await fetch("/api/manager/assign",{
-
-method:"POST",
-
-headers:{
-
-"Content-Type":"application/json"
-
-},
-
-body:JSON.stringify({
-
-employee_id:employee,
-
-wsn:wsn
-
-})
-
-});
-
-const result=await res.json();
-
-document.getElementById("msg").innerHTML=result.message;
-
-document.getElementById("wsn").value="";
-
-document.getElementById("wsn").focus();
-
-}
-
-</script>
+</div>
 
 </body>
-
 </html>
