@@ -44,5 +44,39 @@ router.post("/assign", (req, res) => {
         });
 
 });
+// Bulk Assign WSN
+router.post("/bulkAssign", (req, res) => {
 
+    const { employee_id, wsnList } = req.body;
+
+    if (!employee_id || !Array.isArray(wsnList) || wsnList.length === 0) {
+        return res.status(400).json({
+            success: false,
+            message: "Employee aur WSN list required hai."
+        });
+    }
+
+    const values = wsnList.map(wsn => [employee_id, wsn]);
+
+    db.query(
+        "INSERT INTO assignments (employee_id, wsn) VALUES ?",
+        [values],
+        (err, result) => {
+
+            if (err) {
+                return res.status(500).json({
+                    success: false,
+                    message: err.message
+                });
+            }
+
+            res.json({
+                success: true,
+                message: `${result.affectedRows} WSN Assigned Successfully`
+            });
+
+        }
+    );
+
+});
 module.exports = router;
