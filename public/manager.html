@@ -4,252 +4,632 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Manager Dashboard</title>
+
 <link rel="stylesheet" href="style.css">
+
 </head>
+
 
 <body>
 
+
 <header class="header">
-    <h1>📦 Manual Stock Take by HHD</h1>
-    <div>Manager Panel</div>
+
+<h1>📦 Manual Stock Take by HHD</h1>
+
+<div>Manager Panel</div>
+
 </header>
 
-<!-- Dashboard Cards -->
+
+
 <div class="dashboard">
+
 
 <div class="card">
 <h3>Total WSN</h3>
 <h2 id="totalWSN">250000</h2>
 </div>
 
+
 <div class="card">
 <h3>Assigned</h3>
 <h2 id="assignedWSN">0</h2>
 </div>
+
 
 <div class="card">
 <h3>Pending</h3>
 <h2 id="pendingWSN">0</h2>
 </div>
 
+
 <div class="card">
 <h3>Completed</h3>
 <h2 id="completedWSN">0</h2>
 </div>
 
+
 </div>
 
-<!-- Main Container -->
+
+
+
+
 <div class="container">
 
+
 <h2>Assign Work</h2>
+
 <hr>
 
+
+
 <h3>📂 Upload Excel / CSV</h3>
+
 
 <input
 type="file"
 id="excelFile"
 accept=".csv,.xlsx,.xls">
 
+
 <br><br>
 
+
 <button onclick="uploadFile()">
+
 Upload File
+
 </button>
+
 
 <p id="uploadStatus"></p>
 
+
+
 <hr>
+
+
+
+
+
 <label>Select Employee</label>
 
+
 <select id="employeeList">
-<option value="">Select Employee</option>
+
+<option value="">
+Select Employee
+</option>
+
+
 </select>
+
+
 
 <br><br>
 
+
+
 <label>Single WSN</label>
+
 
 <input
 type="text"
 id="wsn"
 placeholder="Scan or Enter WSN">
 
+
+
+
+
 <div class="btn-group">
 
+
 <button onclick="assignWSN()">
+
 Assign WSN
+
 </button>
 
-<button>
+
+
+<button onclick="sendToHHD()">
+
 Send To HHD
+
 </button>
 
-<button>
+
+
+<button onclick="uploadFile()">
+
 Upload Excel
+
 </button>
+
+
 
 <button onclick="loadEmployees()">
+
 Refresh
+
 </button>
+
+
 </div>
+
+
+
+
 
 <br>
 
+
 <h3>Bulk Assign WSN</h3>
 
+
+
 <textarea
+
 id="bulkWSN"
+
 rows="10"
+
 style="width:100%;padding:12px;font-size:16px;border-radius:8px;"
+
 placeholder="One WSN per line
 
 WSN000001
+
 WSN000002
-WSN000003"></textarea>
+
+WSN000003">
+
+</textarea>
+
+
 
 <br><br>
 
+
+
 <button onclick="bulkAssign()">
+
 Assign All WSN
+
 </button>
+
+
 
 <p id="msg"></p>
 
+
+
+
+
 <h3>Assigned WSN</h3>
+
+
 
 <table>
 
+
 <thead>
 
+
 <tr>
+
 <th>WSN</th>
+
 <th>Status</th>
+
 <th>Employee</th>
+
 </tr>
+
 
 </thead>
 
+
+
 <tbody id="tableBody">
+
 
 </tbody>
 
+
+
 </table>
+
+
 
 </div>
 
+
+
+
+
+
+
 <script>
+
 
 loadEmployees();
 
+
+
+// ============================
+// Load Employee List
+// ============================
+
+
 async function loadEmployees(){
 
-const res=await fetch("/api/manager/employees");
 
-const data=await res.json();
+const res =
+await fetch("/api/manager/employees");
 
-let select=document.getElementById("employeeList");
 
-select.innerHTML="<option value=''>Select Employee</option>";
+const data =
+await res.json();
+
+
+
+let select =
+document.getElementById("employeeList");
+
+
+
+select.innerHTML =
+"<option value=''>Select Employee</option>";
+
+
 
 data.forEach(emp=>{
 
-select.innerHTML+=`
+
+select.innerHTML += `
+
 <option value="${emp.employee_id}">
-${emp.employee_name} (${emp.employee_id})
+
+${emp.employee_name}
+(${emp.employee_id})
+
 </option>
+
 `;
+
 
 });
 
+
 }
+
+
+
+
+
+
+
+// ============================
+// Excel CSV Upload
+// ============================
+
+
+async function uploadFile(){
+
+
+const file =
+document.getElementById("excelFile").files[0];
+
+
+
+if(!file){
+
+
+alert("Please select file");
+
+
+return;
+
+
+}
+
+
+
+const reader =
+new FileReader();
+
+
+
+reader.onload = async function(e){
+
+
+
+const response =
+await fetch("/api/manager/upload",{
+
+
+method:"POST",
+
+
+headers:{
+
+
+"Content-Type":"application/json"
+
+
+},
+
+
+body:JSON.stringify({
+
+
+fileName:file.name,
+
+
+fileData:e.target.result
+
+
+})
+
+
+});
+
+
+
+const result =
+await response.json();
+
+
+
+document.getElementById("uploadStatus").innerHTML =
+result.message;
+
+
+
+};
+
+
+
+reader.readAsText(file);
+
+
+
+}
+
+
+
+
+
+
+
+
+
+// ============================
+// Assign Single WSN
+// ============================
+
 
 async function assignWSN(){
 
-let employee=document.getElementById("employeeList").value;
-let wsn=document.getElementById("wsn").value;
+
+
+let employee =
+document.getElementById("employeeList").value;
+
+
+
+let wsn =
+document.getElementById("wsn").value;
+
+
 
 if(employee=="" || wsn==""){
 
+
 alert("Select Employee and Enter WSN");
+
 
 return;
 
+
 }
 
-const res=await fetch("/api/manager/assign",{
+
+
+
+const res =
+await fetch("/api/manager/assign",{
+
+
 
 method:"POST",
 
+
+
 headers:{
+
+
 "Content-Type":"application/json"
+
+
 },
+
+
 
 body:JSON.stringify({
 
+
 employee_id:employee,
+
 
 wsn:wsn
 
+
 })
+
 
 });
 
-const result=await res.json();
 
-document.getElementById("msg").innerHTML=result.message;
+
+const result =
+await res.json();
+
+
+
+document.getElementById("msg").innerHTML =
+result.message;
+
+
 
 document.getElementById("wsn").value="";
 
+
+
 }
+
+
+
+
+
+
+
+// ============================
+// Bulk Assign
+// ============================
+
 
 async function bulkAssign(){
 
-let employee=document.getElementById("employeeList").value;
 
-let list=document.getElementById("bulkWSN").value
+let employee =
+document.getElementById("employeeList").value;
+
+
+
+let list =
+document.getElementById("bulkWSN").value
+
 .trim()
+
 .split("\n")
+
 .map(x=>x.trim())
+
 .filter(x=>x!="");
+
+
+
 
 if(employee=="" || list.length==0){
 
+
 alert("Select Employee and Enter WSN List");
+
 
 return;
 
+
 }
 
-const res=await fetch("/api/manager/bulkAssign",{
+
+
+
+const res =
+await fetch("/api/manager/bulkAssign",{
+
+
 
 method:"POST",
 
+
+
 headers:{
+
+
 "Content-Type":"application/json"
+
+
 },
+
+
 
 body:JSON.stringify({
 
+
 employee_id:employee,
+
 
 wsnList:list
 
+
 })
+
 
 });
 
-const result=await res.json();
+
+
+const result =
+await res.json();
+
+
 
 alert(result.message);
 
+
+
 document.getElementById("bulkWSN").value="";
+
+
 
 }
 
+
+
+
+
+
+// ============================
+// Send Data To HHD
+// ============================
+
+
+async function sendToHHD(){
+
+
+const res =
+await fetch("/api/manager/sendHHD",{
+
+method:"POST"
+
+});
+
+
+
+const result =
+await res.json();
+
+
+
+alert(result.message);
+
+
+
+}
+
+
+
 </script>
 
+
+
 </body>
+
 </html>
