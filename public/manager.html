@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Manager Panel</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<div class="login-box">
+
+<h2>Manager Panel</h2>
+
+<label>Select Employee</label>
+
+<select id="employeeList">
+
+<option value="">Loading...</option>
+
+</select>
+
+<br><br>
+
+<label>Enter WSN</label>
+
+<input
+type="text"
+id="wsn"
+placeholder="Scan or Enter WSN">
+
+<button onclick="assignWSN()">
+
+Assign WSN
+
+</button>
+
+<button onclick="loadEmployees()">
+
+Refresh Employee List
+
+</button>
+
+<p id="msg"></p>
+
+</div>
+
+<script>
+
+loadEmployees();
+
+async function loadEmployees(){
+
+const res=await fetch("/api/manager/employees");
+
+const data=await res.json();
+
+let select=document.getElementById("employeeList");
+
+select.innerHTML="";
+
+data.forEach(emp=>{
+
+select.innerHTML+=`
+<option value="${emp.employee_id}">
+${emp.employee_name} (${emp.employee_id})
+</option>
+`;
+
+});
+
+}
+
+async function assignWSN(){
+
+let employee=document.getElementById("employeeList").value;
+
+let wsn=document.getElementById("wsn").value;
+
+if(employee=="" || wsn==""){
+
+alert("Select Employee and Enter WSN");
+
+return;
+
+}
+
+const res=await fetch("/api/manager/assign",{
+
+method:"POST",
+
+headers:{
+
+"Content-Type":"application/json"
+
+},
+
+body:JSON.stringify({
+
+employee_id:employee,
+
+wsn:wsn
+
+})
+
+});
+
+const result=await res.json();
+
+document.getElementById("msg").innerHTML=result.message;
+
+document.getElementById("wsn").value="";
+
+document.getElementById("wsn").focus();
+
+}
+
+</script>
+
+</body>
+
+</html>
