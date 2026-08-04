@@ -44,7 +44,24 @@
 <div class="container">
 
 <h2>Assign Work</h2>
+<hr>
 
+<h3>📂 Upload Excel / CSV</h3>
+
+<input
+type="file"
+id="excelFile"
+accept=".csv,.xlsx,.xls">
+
+<br><br>
+
+<button onclick="uploadFile()">
+Upload File
+</button>
+
+<p id="uploadStatus"></p>
+
+<hr>
 <label>Select Employee</label>
 
 <select id="employeeList">
@@ -77,7 +94,6 @@ Upload Excel
 <button onclick="loadEmployees()">
 Refresh
 </button>
-
 </div>
 
 <br>
