@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Employee Scanner</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<h2>Manual Stock Take</h2>
+
+<h3 id="employeeName"></h3>
+
+<p id="progress">
+Progress : 0/0
+</p>
+
+<input
+type="text"
+id="scanBox"
+placeholder="Scan WSN"
+autofocus>
+
+<button onclick="scanWSN()">
+Scan
+</button>
+
+<button onclick="syncData()">
+Sync
+</button>
+
+<h3>Assigned WSN</h3>
+
+<ul id="wsnList"></ul>
+
+<script>
+
+let employee =
+localStorage.getItem("employee");
+
+document.getElementById("employeeName").innerHTML =
+"Employee : " + employee;
+
+let assigned = [];
+let scanned = [];
+
+loadWSN();
+
+async function loadWSN(){
+
+let res =
+await fetch("/api/employee/assigned/"+employee);
+
+assigned =
+await res.json();
+
+let list =
+document.getElementById("wsnList");
+
+list.innerHTML="";
+
+assigned.forEach(item=>{
+
+list.innerHTML+=`
+<li>${item.wsn} | ${item.model} | ${item.location}</li>
+`;
+
+});
+
+document.getElementById("progress").innerHTML=
+"Progress : 0/"+assigned.length;
+
+}
+
+function scanWSN(){
+
+let code =
+document.getElementById("scanBox").value.trim();
+
+if(code=="") return;
+
+if(scanned.includes(code)){
+
+alert("Already Scanned");
+
+return;
+
+}
+
+let found =
+assigned.find(x=>x.wsn==code);
+
+if(found){
+
+scanned.push(code);
+
+alert("Scan Success");
+
+document.getElementById("progress").innerHTML=
+"Progress : "+scanned.length+"/"+assigned.length;
+
+}else{
+
+alert("Invalid WSN");
+
+}
+
+document.getElementById("scanBox").value="";
+
+document.getElementById("scanBox").focus();
+
+}
+
+function syncData(){
+
+alert("Sync API Next Part");
+
+}
+
+</script>
+
+</body>
+
+</html>
